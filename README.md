@@ -239,3 +239,9 @@ The parallel implementation achieved about **1.64×** the hash rate of the seria
 | I/O Pins                  | 105 (~23%)    |
 
 These results show that the design was synthesized successfully and stayed within reasonable device limits for the DE1-SoC FPGA.
+
+## Conclusion
+
+This project demonstrates a working HPS/FPGA-based MD5 SoC on the DE1-SoC platform. By combining a software controller on the HPS with a 32-engine MD5 hardware core on the FPGA, the design supports correctness verification, serial execution, and parallel execution within the same system.
+
+The final implementation showed correct digest generation, successful hardware/software communication, and improved throughput in parallel mode compared to serial mode. Quartus timing and resource results also confirmed that the design was synthesized successfully and remained within practical device limits for the target platform.
