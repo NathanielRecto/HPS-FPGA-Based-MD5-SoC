@@ -1,0 +1,355 @@
+/*
+ * COE838 - MD5 SoC Application
+ * Serial and parallel MD5 hashing using 32 FPGA engines
+ *
+ * Eclipse Defined Symbols:
+ *   (none)          -> SERIAL mode
+ *   PARALLEL        -> PARALLEL mode
+ *   DEBUG           -> single-engine debug (engine 0 only)
+ *   DEBUG_MULTI     -> test engines 0,1,2,3 individually to find even/odd pattern
+ *   RUN_SECONDS=5   -> override benchmark duration (default 10s)
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/mman.h>
+
+#include "hps_0.h"
+
+/* ── Benchmark duration ──────────────────────────────────────────── */
+#ifndef RUN_SECONDS
+#define RUN_SECONDS 10
+#endif
+
+/* ── Hardware constants ──────────────────────────────────────────── */
+#define LW_BRIDGE_BASE  0xFF200000UL
+#define LW_BRIDGE_SPAN  0x00200000UL
+
+#define NUM_ENGINES     32
+#define MSG_WORDS       16
+#define DIGEST_WORDS    4
+
+/* Control slave offsets */
+#define CTRL_START  0
+#define CTRL_RESET  1
+#define CTRL_DONE   2
+
+/* ── Pointer helpers ─────────────────────────────────────────────── */
+#define DATA_PTR(lw)  ((volatile unsigned int *)((char *)(lw) + MD5_DATA_0_BASE))
+#define CTRL_PTR(lw)  ((volatile unsigned int *)((char *)(lw) + MD5_CONTROL_0_BASE))
+
+/* ── Expected digest for MD5("abc") ─────────────────────────────── */
+/*
+ * RFC 1321:  900150983cd24fb0d6963f7d28e17f72
+ * Little-endian 32-bit words (how MD5 outputs them):
+ *   90 01 50 98  ->  0x98500190
+ *   3c d2 4f b0  ->  0xb04fd23c
+ *   d6 96 3f 7d  ->  0x7d3f96d6
+ *   28 e1 7f 72  ->  0x727fe128
+ */
+static const unsigned int EXPECTED[DIGEST_WORDS] = {
+    0x98500190, 0xb04fd23c, 0x7d3f96d6, 0x727fe128
+};
+
+/* ── MD5 message padding ─────────────────────────────────────────── */
+static void build_md5_block(const unsigned char *msg, int len,
+                              unsigned int block[MSG_WORDS])
+{
+    unsigned char buf[64];
+    unsigned long long bit_len;
+    int i;
+
+    memset(buf, 0, sizeof(buf));
+    memcpy(buf, msg, len);
+    buf[len] = 0x80;
+    bit_len  = (unsigned long long)len * 8;
+    memcpy(buf + 56, &bit_len, 8);
+
+    for (i = 0; i < 16; i++)
+        block[i] = (unsigned int) buf[i*4]
+                 | ((unsigned int)buf[i*4+1] <<  8)
+                 | ((unsigned int)buf[i*4+2] << 16)
+                 | ((unsigned int)buf[i*4+3] << 24);
+}
+
+/* ── Address encoding ────────────────────────────────────────────── */
+/*
+ * Write (9-bit):  [8:5]=engine/2 (pair),  [4:0]=word
+ * Read  (7-bit):  [6:2]=engine (0-31),    [1:0]=word
+ */
+static inline void write_msg_word(volatile unsigned int *data,
+                                   int engine, int word, unsigned int val)
+{
+    unsigned int addr = ((unsigned int)(engine / 2) << 5)
+                      | ((unsigned int) word        & 0x1F);
+    data[addr] = val;
+}
+
+/*
+ * Double-read to handle md5_group's one-cycle read latency:
+ *   First  read: presents readaddr to hardware, which latches it
+ *   Second read: readdata is now valid for that address
+ */
+static inline unsigned int read_digest_word(volatile unsigned int *data,
+                                              int engine, int word)
+{
+    unsigned int addr = ((unsigned int)(engine & 0x1F) << 2)
+                      | ((unsigned int) word          &  0x3);
+    (void)data[addr];   /* first:  set readaddr, latch readdata */
+    return data[addr];  /* second: readdata now valid           */
+}
+
+/* ── Engine helpers ──────────────────────────────────────────────── */
+static void reset_engines(volatile unsigned int *ctrl, unsigned int mask)
+{
+    volatile int i;
+    ctrl[CTRL_RESET] = mask;
+    for (i = 0; i < 16; i++);
+    ctrl[CTRL_RESET] = 0;
+}
+
+static void load_message(volatile unsigned int *data, int engine,
+                          const unsigned int msg[MSG_WORDS])
+{
+    int i;
+    for (i = 0; i < MSG_WORDS; i++)
+        write_msg_word(data, engine, i, msg[i]);
+}
+
+static inline void wait_done(volatile unsigned int *ctrl, unsigned int mask)
+{
+    while ((ctrl[CTRL_DONE] & mask) != mask);
+}
+
+static inline int digest_correct(const unsigned int d[DIGEST_WORDS])
+{
+    return d[0] == EXPECTED[0] && d[1] == EXPECTED[1]
+        && d[2] == EXPECTED[2] && d[3] == EXPECTED[3];
+}
+
+static double elapsed_sec(const struct timespec *a, const struct timespec *b)
+{
+    return (b->tv_sec  - a->tv_sec)
+         + (b->tv_nsec - a->tv_nsec) * 1e-9;
+}
+
+/* ── Single engine hash helper (used by debug modes) ────────────── */
+static void run_one(volatile unsigned int *ctrl,
+                     volatile unsigned int *data,
+                     int engine,
+                     const unsigned int msg[MSG_WORDS],
+                     unsigned int digest[DIGEST_WORDS])
+{
+    unsigned int bit = 1u << engine;
+    int w;
+    reset_engines(ctrl, bit);
+    load_message(data, engine, msg);
+    ctrl[CTRL_START] = bit;
+    wait_done(ctrl, bit);
+    ctrl[CTRL_START] = 0;
+    for (w = 0; w < DIGEST_WORDS; w++)
+        digest[w] = read_digest_word(data, engine, w);
+}
+
+/* ═══════════════════════════════════════════════════════════════════ */
+int main(void)
+{
+    int   fd;
+    void *lw_base;
+    volatile unsigned int *ctrl, *data;
+    unsigned int msg[MSG_WORDS];
+    struct timespec t0, tnow;
+    long total_hashes   = 0;
+    long correct_hashes = 0;
+    double elapsed, hash_rate;
+    int e, w;
+
+    fd = open("/dev/mem", O_RDWR | O_SYNC);
+    if (fd < 0) { perror("open /dev/mem"); return 1; }
+
+    lw_base = mmap(NULL, LW_BRIDGE_SPAN,
+                   PROT_READ | PROT_WRITE, MAP_SHARED,
+                   fd, LW_BRIDGE_BASE);
+    if (lw_base == MAP_FAILED) { perror("mmap"); close(fd); return 1; }
+
+    ctrl = CTRL_PTR(lw_base);
+    data = DATA_PTR(lw_base);
+
+    build_md5_block((const unsigned char *)"abc", 3, msg);
+    reset_engines(ctrl, 0xFFFFFFFF);
+
+/* ════════════════════════════════════════════════════════════════════
+ * DEBUG — single hash on engine 0
+ * ════════════════════════════════════════════════════════════════════ */
+#ifdef DEBUG
+
+    printf("=== DEBUG: single hash on engine 0 ===\n\n");
+    unsigned int dbg[DIGEST_WORDS];
+    run_one(ctrl, data, 0, msg, dbg);
+    printf("Word[0..3]: %08x %08x %08x %08x\n", dbg[0],dbg[1],dbg[2],dbg[3]);
+    printf("Expected  : %08x %08x %08x %08x\n",
+           EXPECTED[0],EXPECTED[1],EXPECTED[2],EXPECTED[3]);
+    printf("Result    : %s\n\n", digest_correct(dbg) ? "PASS" : "FAIL");
+
+/* ════════════════════════════════════════════════════════════════════
+ * DEBUG_MULTI — test engines 0,1,2,3,4,5,6,7 individually
+ *
+ * This reveals the even/odd pattern causing 50% accuracy.
+ * Each engine is independently reset, loaded, started, and read.
+ * If even engines pass and odd engines fail (or vice versa),
+ * the issue is in the start/done/readaddr mapping for odd engines.
+ * ════════════════════════════════════════════════════════════════════ */
+#elif defined(DEBUG_MULTI)
+
+    printf("=== DEBUG_MULTI: testing engines 0-7 individually ===\n\n");
+    printf("Expected: %08x%08x%08x%08x\n\n",
+           EXPECTED[0],EXPECTED[1],EXPECTED[2],EXPECTED[3]);
+
+    unsigned int d[DIGEST_WORDS];
+    int pass_count = 0;
+
+    for (e = 0; e < 8; e++) {
+        run_one(ctrl, data, e, msg, d);
+        int ok = digest_correct(d);
+        if (ok) pass_count++;
+        printf("Engine %2d: %08x%08x%08x%08x  [%s]  pair=%d within_pair=%d\n",
+               e, d[0], d[1], d[2], d[3],
+               ok ? "PASS" : "FAIL",
+               e / 2,       /* which md5_unit */
+               e % 2);      /* which engine within the pair */
+    }
+
+    printf("\n%d/8 engines passed.\n", pass_count);
+
+    if (pass_count == 4) {
+        printf("\n--- Pattern analysis ---\n");
+        /* Check even-pass / odd-fail */
+        int even_pass = 1, odd_pass = 1;
+        for (e = 0; e < 8; e++) {
+            unsigned int tmp[DIGEST_WORDS];
+            run_one(ctrl, data, e, msg, tmp);
+            if (e % 2 == 0 && !digest_correct(tmp)) even_pass = 0;
+            if (e % 2 == 1 && !digest_correct(tmp)) odd_pass  = 0;
+        }
+        if (even_pass && !odd_pass)
+            printf("CONFIRMED: Even engines pass, odd engines fail.\n"
+                   "-> The start/done/read mapping for odd-indexed engines\n"
+                   "   within each pair is likely incorrect in hardware.\n");
+        else if (!even_pass && odd_pass)
+            printf("CONFIRMED: Odd engines pass, even engines fail.\n");
+        else
+            printf("Mixed pattern - not a clean even/odd split.\n");
+    }
+
+#else
+
+/* ════════════════════════════════════════════════════════════════════
+ * BENCHMARK MODES
+ * ════════════════════════════════════════════════════════════════════ */
+    printf("Run duration   : %d second(s)\n", RUN_SECONDS);
+
+#ifndef PARALLEL
+    /* ──────────────────────────────────────────────────────────────
+     * SERIAL MODE — one engine at a time, cycle 0->31->0
+     * ────────────────────────────────────────────────────────────── */
+    printf("Mode           : SERIAL\n\n");
+
+    unsigned int digest[DIGEST_WORDS];
+    unsigned int bit;
+
+    clock_gettime(CLOCK_MONOTONIC, &t0);
+    e = 0;
+
+    for (;;) {
+        clock_gettime(CLOCK_MONOTONIC, &tnow);
+        if (elapsed_sec(&t0, &tnow) >= RUN_SECONDS) break;
+
+        bit = 1u << e;
+        reset_engines(ctrl, bit);
+        load_message(data, e, msg);
+        ctrl[CTRL_START] = bit;
+        wait_done(ctrl, bit);
+        ctrl[CTRL_START] = 0;
+
+        for (w = 0; w < DIGEST_WORDS; w++)
+            digest[w] = read_digest_word(data, e, w);
+
+        total_hashes++;
+        if (digest_correct(digest))
+            correct_hashes++;
+
+        e = (e + 1) % NUM_ENGINES;
+    }
+
+    clock_gettime(CLOCK_MONOTONIC, &tnow);
+
+#else
+    /* ──────────────────────────────────────────────────────────────
+     * PARALLEL MODE — all 32 engines simultaneously, each round
+     * ────────────────────────────────────────────────────────────── */
+    printf("Mode           : PARALLEL\n\n");
+
+    unsigned int digests[NUM_ENGINES][DIGEST_WORDS];
+    int all_match = 1;
+
+    clock_gettime(CLOCK_MONOTONIC, &t0);
+
+    for (;;) {
+        clock_gettime(CLOCK_MONOTONIC, &tnow);
+        if (elapsed_sec(&t0, &tnow) >= RUN_SECONDS) break;
+
+        reset_engines(ctrl, 0xFFFFFFFF);
+
+        for (e = 0; e < NUM_ENGINES; e++)
+            load_message(data, e, msg);
+
+        ctrl[CTRL_START] = 0xFFFFFFFF;
+        wait_done(ctrl, 0xFFFFFFFF);
+        ctrl[CTRL_START] = 0;
+
+        for (e = 0; e < NUM_ENGINES; e++) {
+            for (w = 0; w < DIGEST_WORDS; w++)
+                digests[e][w] = read_digest_word(data, e, w);
+
+            total_hashes++;
+            if (digest_correct(digests[e]))
+                correct_hashes++;
+            else
+                all_match = 0;
+        }
+    }
+
+    clock_gettime(CLOCK_MONOTONIC, &tnow);
+#endif  /* PARALLEL */
+
+    /* ── Final stats ───────────────────────────────────────────── */
+    elapsed   = elapsed_sec(&t0, &tnow);
+    hash_rate = (total_hashes > 0) ? (double)total_hashes / elapsed : 0.0;
+
+    printf("Total hashes   : %ld\n",    total_hashes);
+    printf("Correct hashes : %ld\n",    correct_hashes);
+    printf("Elapsed time   : %.6f s\n", elapsed);
+    printf("Hash rate      : %.2f hashes/s  (%.4f MH/s)\n",
+           hash_rate, hash_rate / 1e6);
+    if (total_hashes > 0)
+        printf("Accuracy       : %.2f%%\n",
+               100.0 * correct_hashes / total_hashes);
+    printf("Result         : %s\n",
+           (correct_hashes == total_hashes && total_hashes > 0)
+           ? "PASS" : "FAIL");
+#ifdef PARALLEL
+    printf("Cross-engine   : %s\n",
+           all_match ? "All engines agree (PASS)" : "Engine mismatch (FAIL)");
+#endif
+
+#endif  /* DEBUG / DEBUG_MULTI / benchmark */
+
+    munmap(lw_base, LW_BRIDGE_SPAN);
+    close(fd);
+    return 0;
+}
+

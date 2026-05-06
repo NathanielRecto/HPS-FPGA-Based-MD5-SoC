@@ -1,0 +1,233 @@
+16:07:58 **** Build of configuration Debug for project project ****
+make all 
+Building file: ../software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.c
+Invoking: GCC C Compiler
+arm-linux-gnueabihf-gcc -I/usr/local/Quartus-EDS-14.0/embedded/ip/altera/hps/altera_hps/hwlib/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.d" -MT"software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.d" -o "software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.o" "../software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.c"
+Finished building: ../software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.c
+ 
+Building file: ../software/main.c
+Invoking: GCC C Compiler
+arm-linux-gnueabihf-gcc -I/usr/local/Quartus-EDS-14.0/embedded/ip/altera/hps/altera_hps/hwlib/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"software/main.d" -MT"software/main.d" -o "software/main.o" "../software/main.c"
+../software/main.c: In function ‘main’:
+../software/main.c:144:12: warning: unused variable ‘w’ [-Wunused-variable]
+Finished building: ../software/main.c
+ 
+Building target: project
+Invoking: GCC C Linker
+arm-linux-gnueabihf-gcc  -o "project"  ./software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.o  ./software/main.o   -lpthread -lm -lrt
+Finished building target: project
+ 
+08:48:16 **** Incremental Build of configuration Debug for project project ****
+make all 
+Building file: ../software/main.c
+Invoking: GCC C Compiler
+arm-linux-gnueabihf-gcc -I/usr/local/Quartus-EDS-14.0/embedded/ip/altera/hps/altera_hps/hwlib/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"software/main.d" -MT"software/main.d" -o "software/main.o" "../software/main.c"
+Finished building: ../software/main.c
+ 
+Building target: project
+Invoking: GCC C Linker
+arm-linux-gnueabihf-gcc  -o "project"  ./software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.o  ./software/main.o   -lpthread -lm -lrt
+Finished building target: project
+ 
+11:52:59 **** Incremental Build of configuration Debug for project project ****
+make all 
+Building file: ../software/main.c
+Invoking: GCC C Compiler
+arm-linux-gnueabihf-gcc -I/usr/local/Quartus-EDS-14.0/embedded/ip/altera/hps/altera_hps/hwlib/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"software/main.d" -MT"software/main.d" -o "software/main.o" "../software/main.c"
+Finished building: ../software/main.c
+ 
+Building target: project
+Invoking: GCC C Linker
+arm-linux-gnueabihf-gcc  -o "project"  ./software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.o  ./software/main.o   -lpthread -lm -lrt
+Finished building target: project
+ 
+11:59:43 **** Incremental Build of configuration Debug for project project ****
+make all 
+Building file: ../software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.c
+Invoking: GCC C Compiler
+arm-linux-gnueabihf-gcc -DDEBUG -I/usr/local/Quartus-EDS-14.0/embedded/ip/altera/hps/altera_hps/hwlib/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.d" -MT"software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.d" -o "software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.o" "../software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.c"
+Finished building: ../software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.c
+ 
+Building file: ../software/main.c
+Invoking: GCC C Compiler
+arm-linux-gnueabihf-gcc -DDEBUG -I/usr/local/Quartus-EDS-14.0/embedded/ip/altera/hps/altera_hps/hwlib/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"software/main.d" -MT"software/main.d" -o "software/main.o" "../software/main.c"
+../software/main.c: In function ‘main’:
+../software/main.c:167:9: warning: unused variable ‘e’ [-Wunused-variable]
+../software/main.c:166:21: warning: unused variable ‘hash_rate’ [-Wunused-variable]
+../software/main.c:166:12: warning: unused variable ‘elapsed’ [-Wunused-variable]
+../software/main.c:165:10: warning: unused variable ‘correct_hashes’ [-Wunused-variable]
+../software/main.c:164:10: warning: unused variable ‘total_hashes’ [-Wunused-variable]
+../software/main.c:163:25: warning: unused variable ‘tnow’ [-Wunused-variable]
+../software/main.c:163:21: warning: unused variable ‘t0’ [-Wunused-variable]
+../software/main.c: At top level:
+../software/main.c:150:15: warning: ‘elapsed_sec’ defined but not used [-Wunused-function]
+Finished building: ../software/main.c
+ 
+Building target: project
+Invoking: GCC C Linker
+arm-linux-gnueabihf-gcc  -o "project"  ./software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.o  ./software/main.o   -lpthread -lm -lrt
+Finished building target: project
+ 
+12:02:49 **** Incremental Build of configuration Debug for project project ****
+make all 
+make: Nothing to be done for `all'.
+12:08:13 **** Incremental Build of configuration Debug for project project ****
+make all 
+Building file: ../software/main.c
+Invoking: GCC C Compiler
+arm-linux-gnueabihf-gcc -DDEBUG -I/usr/local/Quartus-EDS-14.0/embedded/ip/altera/hps/altera_hps/hwlib/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"software/main.d" -MT"software/main.d" -o "software/main.o" "../software/main.c"
+../software/main.c: In function ‘main’:
+../software/main.c:172:9: warning: unused variable ‘e’ [-Wunused-variable]
+../software/main.c:171:21: warning: unused variable ‘hash_rate’ [-Wunused-variable]
+../software/main.c:171:12: warning: unused variable ‘elapsed’ [-Wunused-variable]
+../software/main.c:170:10: warning: unused variable ‘correct_hashes’ [-Wunused-variable]
+../software/main.c:169:10: warning: unused variable ‘total_hashes’ [-Wunused-variable]
+../software/main.c:168:25: warning: unused variable ‘tnow’ [-Wunused-variable]
+../software/main.c:168:21: warning: unused variable ‘t0’ [-Wunused-variable]
+../software/main.c: At top level:
+../software/main.c:155:15: warning: ‘elapsed_sec’ defined but not used [-Wunused-function]
+Finished building: ../software/main.c
+ 
+Building target: project
+Invoking: GCC C Linker
+arm-linux-gnueabihf-gcc  -o "project"  ./software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.o  ./software/main.o   -lpthread -lm -lrt
+Finished building target: project
+ 
+12:11:57 **** Incremental Build of configuration Debug for project project ****
+make all 
+Building file: ../software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.c
+Invoking: GCC C Compiler
+arm-linux-gnueabihf-gcc -I/usr/local/Quartus-EDS-14.0/embedded/ip/altera/hps/altera_hps/hwlib/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.d" -MT"software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.d" -o "software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.o" "../software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.c"
+Finished building: ../software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.c
+ 
+Building file: ../software/main.c
+Invoking: GCC C Compiler
+arm-linux-gnueabihf-gcc -I/usr/local/Quartus-EDS-14.0/embedded/ip/altera/hps/altera_hps/hwlib/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"software/main.d" -MT"software/main.d" -o "software/main.o" "../software/main.c"
+Finished building: ../software/main.c
+ 
+Building target: project
+Invoking: GCC C Linker
+arm-linux-gnueabihf-gcc  -o "project"  ./software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.o  ./software/main.o   -lpthread -lm -lrt
+Finished building target: project
+ 
+12:13:02 **** Incremental Build of configuration Debug for project project ****
+make all 
+Building file: ../software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.c
+Invoking: GCC C Compiler
+arm-linux-gnueabihf-gcc -DPARALLEL -I/usr/local/Quartus-EDS-14.0/embedded/ip/altera/hps/altera_hps/hwlib/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.d" -MT"software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.d" -o "software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.o" "../software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.c"
+Finished building: ../software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.c
+ 
+Building file: ../software/main.c
+Invoking: GCC C Compiler
+arm-linux-gnueabihf-gcc -DPARALLEL -I/usr/local/Quartus-EDS-14.0/embedded/ip/altera/hps/altera_hps/hwlib/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"software/main.d" -MT"software/main.d" -o "software/main.o" "../software/main.c"
+Finished building: ../software/main.c
+ 
+Building target: project
+Invoking: GCC C Linker
+arm-linux-gnueabihf-gcc  -o "project"  ./software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.o  ./software/main.o   -lpthread -lm -lrt
+Finished building target: project
+ 
+12:28:08 **** Incremental Build of configuration Debug for project project ****
+make all 
+Building file: ../software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.c
+Invoking: GCC C Compiler
+arm-linux-gnueabihf-gcc -DDEBUG_MULTI -I/usr/local/Quartus-EDS-14.0/embedded/ip/altera/hps/altera_hps/hwlib/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.d" -MT"software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.d" -o "software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.o" "../software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.c"
+Finished building: ../software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.c
+ 
+Building file: ../software/main.c
+Invoking: GCC C Compiler
+arm-linux-gnueabihf-gcc -DDEBUG_MULTI -I/usr/local/Quartus-EDS-14.0/embedded/ip/altera/hps/altera_hps/hwlib/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"software/main.d" -MT"software/main.d" -o "software/main.o" "../software/main.c"
+../software/main.c: In function ‘main’:
+../software/main.c:169:12: warning: unused variable ‘w’ [-Wunused-variable]
+../software/main.c:168:21: warning: unused variable ‘hash_rate’ [-Wunused-variable]
+../software/main.c:168:12: warning: unused variable ‘elapsed’ [-Wunused-variable]
+../software/main.c:167:10: warning: unused variable ‘correct_hashes’ [-Wunused-variable]
+../software/main.c:166:10: warning: unused variable ‘total_hashes’ [-Wunused-variable]
+../software/main.c:165:25: warning: unused variable ‘tnow’ [-Wunused-variable]
+../software/main.c:165:21: warning: unused variable ‘t0’ [-Wunused-variable]
+../software/main.c: At top level:
+../software/main.c:134:15: warning: ‘elapsed_sec’ defined but not used [-Wunused-function]
+Finished building: ../software/main.c
+ 
+Building target: project
+Invoking: GCC C Linker
+arm-linux-gnueabihf-gcc  -o "project"  ./software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.o  ./software/main.o   -lpthread -lm -lrt
+Finished building target: project
+ 
+12:36:59 **** Incremental Build of configuration Debug for project project ****
+make all 
+Building file: ../software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.c
+Invoking: GCC C Compiler
+arm-linux-gnueabihf-gcc -I/usr/local/Quartus-EDS-14.0/embedded/ip/altera/hps/altera_hps/hwlib/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.d" -MT"software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.d" -o "software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.o" "../software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.c"
+Finished building: ../software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.c
+ 
+Building file: ../software/main.c
+Invoking: GCC C Compiler
+arm-linux-gnueabihf-gcc -I/usr/local/Quartus-EDS-14.0/embedded/ip/altera/hps/altera_hps/hwlib/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"software/main.d" -MT"software/main.d" -o "software/main.o" "../software/main.c"
+Finished building: ../software/main.c
+ 
+Building target: project
+Invoking: GCC C Linker
+arm-linux-gnueabihf-gcc  -o "project"  ./software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.o  ./software/main.o   -lpthread -lm -lrt
+Finished building target: project
+ 
+12:39:13 **** Incremental Build of configuration Debug for project project ****
+make all 
+Building file: ../software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.c
+Invoking: GCC C Compiler
+arm-linux-gnueabihf-gcc -DDEBUG_MULTI -I/usr/local/Quartus-EDS-14.0/embedded/ip/altera/hps/altera_hps/hwlib/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.d" -MT"software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.d" -o "software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.o" "../software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.c"
+Finished building: ../software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.c
+ 
+Building file: ../software/main.c
+Invoking: GCC C Compiler
+arm-linux-gnueabihf-gcc -DDEBUG_MULTI -I/usr/local/Quartus-EDS-14.0/embedded/ip/altera/hps/altera_hps/hwlib/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"software/main.d" -MT"software/main.d" -o "software/main.o" "../software/main.c"
+../software/main.c: In function ‘main’:
+../software/main.c:168:21: warning: unused variable ‘hash_rate’ [-Wunused-variable]
+../software/main.c:168:12: warning: unused variable ‘elapsed’ [-Wunused-variable]
+../software/main.c:167:10: warning: unused variable ‘correct_hashes’ [-Wunused-variable]
+../software/main.c:166:10: warning: unused variable ‘total_hashes’ [-Wunused-variable]
+../software/main.c:165:25: warning: unused variable ‘tnow’ [-Wunused-variable]
+../software/main.c:165:21: warning: unused variable ‘t0’ [-Wunused-variable]
+../software/main.c: At top level:
+../software/main.c:152:15: warning: ‘elapsed_sec’ defined but not used [-Wunused-function]
+Finished building: ../software/main.c
+ 
+Building target: project
+Invoking: GCC C Linker
+arm-linux-gnueabihf-gcc  -o "project"  ./software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.o  ./software/main.o   -lpthread -lm -lrt
+Finished building target: project
+ 
+12:41:32 **** Incremental Build of configuration Debug for project project ****
+make all 
+Building file: ../software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.c
+Invoking: GCC C Compiler
+arm-linux-gnueabihf-gcc -I/usr/local/Quartus-EDS-14.0/embedded/ip/altera/hps/altera_hps/hwlib/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.d" -MT"software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.d" -o "software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.o" "../software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.c"
+Finished building: ../software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.c
+ 
+Building file: ../software/main.c
+Invoking: GCC C Compiler
+arm-linux-gnueabihf-gcc -I/usr/local/Quartus-EDS-14.0/embedded/ip/altera/hps/altera_hps/hwlib/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"software/main.d" -MT"software/main.d" -o "software/main.o" "../software/main.c"
+Finished building: ../software/main.c
+ 
+Building target: project
+Invoking: GCC C Linker
+arm-linux-gnueabihf-gcc  -o "project"  ./software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.o  ./software/main.o   -lpthread -lm -lrt
+Finished building target: project
+ 
+12:42:13 **** Incremental Build of configuration Debug for project project ****
+make all 
+Building file: ../software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.c
+Invoking: GCC C Compiler
+arm-linux-gnueabihf-gcc -DPARALLEL -I/usr/local/Quartus-EDS-14.0/embedded/ip/altera/hps/altera_hps/hwlib/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.d" -MT"software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.d" -o "software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.o" "../software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.c"
+Finished building: ../software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.c
+ 
+Building file: ../software/main.c
+Invoking: GCC C Compiler
+arm-linux-gnueabihf-gcc -DPARALLEL -I/usr/local/Quartus-EDS-14.0/embedded/ip/altera/hps/altera_hps/hwlib/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"software/main.d" -MT"software/main.d" -o "software/main.o" "../software/main.c"
+Finished building: ../software/main.c
+ 
+Building target: project
+Invoking: GCC C Linker
+arm-linux-gnueabihf-gcc  -o "project"  ./software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.o  ./software/main.o   -lpthread -lm -lrt
+Finished building target: project
+ 

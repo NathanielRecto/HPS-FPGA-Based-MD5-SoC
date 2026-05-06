@@ -1,0 +1,20 @@
+12:42:13 **** Incremental Build of configuration Debug for project project ****
+make all 
+Building file: ../software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.c
+Invoking: GCC C Compiler
+arm-linux-gnueabihf-gcc -DPARALLEL -I/usr/local/Quartus-EDS-14.0/embedded/ip/altera/hps/altera_hps/hwlib/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.d" -MT"software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.d" -o "software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.o" "../software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.c"
+Finished building: ../software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.c
+ 
+Building file: ../software/main.c
+Invoking: GCC C Compiler
+arm-linux-gnueabihf-gcc -DPARALLEL -I/usr/local/Quartus-EDS-14.0/embedded/ip/altera/hps/altera_hps/hwlib/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"software/main.d" -MT"software/main.d" -o "software/main.o" "../software/main.c"
+Finished building: ../software/main.c
+ 
+Building target: project
+Invoking: GCC C Linker
+arm-linux-gnueabihf-gcc  -o "project"  ./software/.metadata/.plugins/org.eclipse.cdt.make.core/specs.o  ./software/main.o   -lpthread -lm -lrt
+Finished building target: project
+ 
+
+12:42:13 Build Finished (took 508ms)
+
