@@ -88,6 +88,20 @@ The provided `md5_group` core contains **32 MD5 engines**, allowing the design t
 - **Serial mode**: one engine at a time
 - **Parallel mode**: all 32 engines together
 
+### Block Diagram
+
+![System block diagram](block_diagram.png)
+
+### Custom Avalon-MM Interfaces
+
+![Custom Avalon-MM slave blocks](slaves.png)
+
+## Qsys Integration
+
+The HPS subsystem and the custom slave interfaces were integrated in Qsys. The signals needed to connect to the MD5 hashing core were exported as conduit signals and then connected at the top-level VHDL design.
+
+![Qsys system](qsys.png)
+
 ---
 
 ## Hardware/Software Flow
@@ -180,6 +194,8 @@ In parallel mode, the software:
 
 The `DEBUG_MULTI` mode was used before the benchmark runs to confirm that the addressing and digest readback were working correctly across multiple engines.
 
+![DEBUG_MULTI output](DEBUG_MULTI.png)
+
 All eight tested engines produced the expected digest and passed the correctness check.
 
 ## Benchmark Results
@@ -200,10 +216,7 @@ Hash Rate = Total Hashes / Elapsed Time
 ```
 ### Terminal Output
 
-<p align="center">
-  <img src="README_assets/serial_result.png" width="45%" />
-  <img src="README_assets/parallel_result.png" width="45%" />
-</p>
+<p align="left"> <img src="SERIAL.png" width="45%" /> <img src="PARALLEL.png" width="40%" /> </p>
 
 The parallel implementation achieved about **1.64×** the hash rate of the serial implementation.
 
