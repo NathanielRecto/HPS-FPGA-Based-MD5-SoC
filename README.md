@@ -245,3 +245,7 @@ These results show that the design was synthesized successfully and stayed withi
 This project demonstrates a working HPS/FPGA-based MD5 SoC on the DE1-SoC platform. By combining a software controller on the HPS with a 32-engine MD5 hardware core on the FPGA, the design supports correctness verification, serial execution, and parallel execution within the same system.
 
 The final implementation showed correct digest generation, successful hardware/software communication, and improved throughput in parallel mode compared to serial mode. Quartus timing and resource results also confirmed that the design was synthesized successfully and remained within practical device limits for the target platform.
+
+## License
+
+This repository is for academic and portfolio use. If you reuse this project, follow your institution's academic integrity policy and do not submit it as your own work.
